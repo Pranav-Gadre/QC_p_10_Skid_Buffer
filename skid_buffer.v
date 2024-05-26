@@ -22,5 +22,24 @@ module skid_buffer (
 );
 
   // Write your logic here...
-
+    reg  [2:0] count;
+    reg  i_valid_i_p1;
+    reg  i_valid_i_p2;
+    wire just_ivi;
+    wire just_just_ivi;
+    
+    assign just_ivi      = ((!i_valid_i_p1) && i_valid_i);
+    assign just_just_ivi = ((!i_valid_i_p2) && i_valid_i_p2);
+    
+    always @ (posedge clk or posedge reset) begin 
+        if (reset) begin 
+            count        <= 0;
+            i_valid_i_p1 <= 0;
+            i_valid_i_p2 <= 0;
+        end else begin 
+            i_valid_i_p1 <= i_valid_i;
+            i_valid_i_p2 <= i_valid_i_p1;
+        end 
+    end 
+    
 endmodule
