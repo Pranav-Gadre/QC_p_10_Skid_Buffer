@@ -1,0 +1,18 @@
+
+Theory source: http://fpgacpu.ca/fpga/Pipeline_Skid_Buffer.html#:~:text=A%20skid%20buffer%20is%20the,smooth%2Dout%20data%20rate%20mismatches.
+Points to be noted:
+
+-- skid buffer is the smallest Pipeline_FIFO_buffer, with only two entries. 
+-- Useful for concurrency/timing closure, not for smoothing out data rate mismatches.
+-- bcz of being smaller than LUTRAM/Block-RAM, give more freedom for Place N route.
+
+-- Aim is to allow each end to send off one item of data without having to wait for a response  
+
+-- e_valid_o closely follows e_valid_i w/o a clock delay. 
+-- assign valid_o = valid_i;
+-- skid buffer acts as pass through when both valid_i and ready_i are high.
+-- signal used to indicate if there is data to send -> "Valid"
+-- signal used to indicate if the module is able to receive data -> "ready"
+-- when valid and ready are both high, data transfer occurs.
+
+-- what are "credit based connections"?
