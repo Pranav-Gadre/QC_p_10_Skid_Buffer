@@ -68,7 +68,25 @@ Design Description:
 -- design can be in empty, half or full states. How do I know in which state the design is?
 -- should I maintain a count? When should I increment / decrement it?
 -- At reset count = 0
--- 
+
+-- when will be the i_ready_o "1"?
+-- based on the waveform:
+-- either after 1 cycle of e_ready_i 
+
+-- how will we know if skid buffer is empty, half, full?
+-- e_ready_i will act as fifo_read and 
+-- i_valid_i will act as fifo_write
+
+-- just_ivi will make transition from empty -> half -> full
+-- ready_rise will make transition from full -> half -> empty
+-- what happens when both are simultaneously present?
+
+-- how will the transition from pass through phase to skid buffer phase 
+   will happen?
+   
+-- e_data_o is "0" at the end cycle,
+-- what is relationship b/w i_data_i and e_data_o, when i_valid_i is "0"
+   but e_ready_i is "1"
 
 
 After completion:

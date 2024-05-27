@@ -17,10 +17,11 @@ module skid_buffer_tb (
     reg  reset;
     reg  i_valid_i;
     reg  [7:0] i_data_i;
-    reg  i_ready_o;
-    wire e_valid_o;
+    reg   e_ready_i;
+    wire  e_valid_o;
+    wire i_ready_o;
     wire [7:0] e_data_o;
-    wire e_ready_i;
+    
     
     skid_buffer sb(
     .clk          (    clk          ),
@@ -36,23 +37,25 @@ module skid_buffer_tb (
     always #5 clk = ~clk;
     
     task demo_tc();
-        #10;
+    begin 
+        #5;
         reset = 0;
+        // Using NBAs so that these assignments take
+        // place after application of clock edge
+        #10;
+        i_valid_i <= 1;
+        i_data_i  <= 'd90;
         
         #10;
-        i_valid_i = 1;
-        i_data_i = 'd90;
-        
-        #10;
-        i_data_i = 'd255;
+        i_data_i  <= 'd255;
         
         #30;
-        e_ready_i = 1;
+        e_ready_i <= 1;
         
         #20;
-        i_valid_i = 0;
-        i_data_i  = 'd0;
-    
+        i_valid_i <= 0;
+        i_data_i  <= 'd0;
+    end 
     endtask
     
     initial begin 
