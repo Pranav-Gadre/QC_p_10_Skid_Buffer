@@ -41,6 +41,9 @@ module skid_buffer (
     assign ready_rise_1  = ((!e_ready_i_p1) && e_ready_i);
     assign ready_rise_2  = ((!e_ready_i_p2) && e_ready_i_p1);
     
+    // major
+    assign e_data_o = (e_ready_i && i_valid_i) ? i_data_i : main_buff;
+    
     always @ (posedge clk or posedge reset) begin 
         if (reset) begin 
             count        <= 0;
