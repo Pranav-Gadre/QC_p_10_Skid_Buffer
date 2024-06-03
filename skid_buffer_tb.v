@@ -38,7 +38,7 @@ module skid_buffer_tb (
     
     task demo_tc();
     begin 
-        #5;
+        #10;
         reset = 0;
         // Using NBAs so that these assignments take
         // place after application of clock edge
@@ -59,7 +59,7 @@ module skid_buffer_tb (
     endtask
     
     initial begin 
-    clk = 0;
+    clk = 1;
     reset = 1;
     i_valid_i = 0;
     i_data_i  = 0;

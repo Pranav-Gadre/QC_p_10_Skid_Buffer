@@ -76,13 +76,30 @@ Design Description:
 -- how will we know if skid buffer is empty, half, full?
 -- e_ready_i will act as fifo_read and 
 -- i_valid_i will act as fifo_write
+-- Together thse signals will cause the FSM to go in the 
+-- Empty <> Half <> Full.
+-- since we are not designing a circular skid buffer, 
+-- fifo_write due to i_valid_i can happen only when FIFO is NOT FULL 
+-- fifo_read due to e_ready_i can happen only when FIFO is NOT EMPTY
+-- Lets see how these signals will cause the state transition
+-- fifo_write or i_valid_i will move the state towards FULL
 
 -- just_ivi will make transition from empty -> half -> full
 -- ready_rise will make transition from full -> half -> empty
--- what happens when both are simultaneously present?
+-- what happens when both are simultaneously present? Nothing
+
+-- Now after FSM formation, the question is when FSM is Full, 
+   does the main_buff get the value of extra_buff? NO.
+   
+-- Under what conditions the e_data_o will be directly outing the i_data_i?
 
 -- how will the transition from pass through phase to skid buffer phase 
    will happen?
+
+-- Do we really need either EXCLUSIVE READY or EXCLUSIVE VALID signal for 
+   state transition? (exclusive: at a time only one signal is asserted)
+
+-- skid buffer acting as pass through, means at EMPTY state, right?
    
 -- e_data_o is "0" at the end cycle,
 -- what is relationship b/w i_data_i and e_data_o, when i_valid_i is "0"

@@ -22,9 +22,16 @@ module skid_buffer (
 );
 
   // Write your logic here...
+    parameter EMPTY = 0,
+              HALF  = 1,
+              FULL  = 2;
+    
+    reg  [2:0] state;          
     reg  [2:0] count;
     reg  [7:0] extra_buff;
-    reg  [7:0] main_buff
+    reg  [7:0] main_buff;
+    reg  e_ready_i_d1;
+    
     reg  i_valid_i_p1;
     reg  i_valid_i_p2;
     reg  e_ready_i_p1;
@@ -42,7 +49,12 @@ module skid_buffer (
     assign ready_rise_2  = ((!e_ready_i_p2) && e_ready_i_p1);
     
     // major
-    assign e_data_o = (e_ready_i && i_valid_i) ? i_data_i : main_buff;
+//    assign e_data_o  = (e_ready_i && i_valid_i) ? i_data_i : main_buff;
+    assign e_data_o  = (state == EMPTY) ? i_data_i   :
+                       (state == HALF ) ? extra_buff : main_buff;
+//    assign e_data_o  = (state == EMPTY) ? i_data_i   : main_buff;
+    assign e_valid_o = i_valid_i;
+    assign i_ready_o = ((state == EMPTY && i_valid_i) || e_ready_i_d1);
     
     always @ (posedge clk or posedge reset) begin 
         if (reset) begin 
@@ -52,8 +64,10 @@ module skid_buffer (
             e_ready_i_p1 <= 0;
             extra_buff   <= 0;
             main_buff    <= 0;
+            state        <= EMPTY;
+            e_ready_i_d1 <= 0;
         end else begin 
-            i_valid_i_p1 <= i_valid_i;
+            /* i_valid_i_p1 <= i_valid_i;
             i_valid_i_p2 <= i_valid_i_p1;
             e_ready_i_p1 <= e_ready_i;
             if (just_ivi || just_just_ivi) begin 
@@ -62,7 +76,43 @@ module skid_buffer (
             end else begin
                 extra_buff <= extra_buff;
                 main_buff  <= main_buff;
-            end            
+            end */ 
+            e_ready_i_d1 <= e_ready_i;
+            case (state) 
+            EMPTY: begin 
+                if (i_valid_i && (!e_ready_i)) begin 
+                    state <= HALF;
+                end else begin 
+                    state <= EMPTY;
+                end 
+                extra_buff <= i_data_i;
+                main_buff  <= extra_buff;
+            end 
+            HALF : begin
+                if (i_valid_i && (!e_ready_i)) begin 
+                    state <= FULL;
+            //    end else if (e_ready_i && (!i_valid_i)) begin 
+            //        state <= EMPTY;
+                end else if (e_ready_i) begin 
+                    state <= EMPTY;
+                end else begin 
+                    state <= HALF;
+                end 
+                extra_buff <= i_data_i;
+                main_buff  <= extra_buff;
+            end 
+            FULL : begin
+            //    if (e_ready_i && (!i_valid_i)) begin 
+            //        state <= HALF;
+                if (e_ready_i) begin 
+                    state <= HALF;
+                end else begin 
+                    state <= FULL;
+                end 
+                extra_buff <= extra_buff;
+                main_buff  <= main_buff;
+            end 
+            endcase
         end 
     end 
     
