@@ -27,27 +27,11 @@ module skid_buffer (
               FULL  = 2;
     
     reg  [2:0] state;          
-    reg  [2:0] count;
     reg  [7:0] extra_buff;
     reg  [7:0] main_buff;
     reg  e_ready_i_d1;
     
-    reg  i_valid_i_p1;
-    reg  i_valid_i_p2;
-    reg  e_ready_i_p1;
-    reg  e_ready_i_p2;
-    wire just_ivi;
-    wire just_just_ivi;
-//    wire ivi_fall_1;
-//    wire ivi_fall_2;
-    wire ready_rise_1;
-    wire ready_rise_2;
-    
-    assign just_ivi      = ((!i_valid_i_p1) && i_valid_i);
-    assign just_just_ivi = ((!i_valid_i_p2) && i_valid_i_p1);
-    assign ready_rise_1  = ((!e_ready_i_p1) && e_ready_i);
-    assign ready_rise_2  = ((!e_ready_i_p2) && e_ready_i_p1);
-    
+
     // major
 //    assign e_data_o  = (e_ready_i && i_valid_i) ? i_data_i : main_buff;
     assign e_data_o  = (state == EMPTY) ? i_data_i   :
@@ -58,25 +42,11 @@ module skid_buffer (
     
     always @ (posedge clk or posedge reset) begin 
         if (reset) begin 
-            count        <= 0;
-            i_valid_i_p1 <= 0;
-            i_valid_i_p2 <= 0;
-            e_ready_i_p1 <= 0;
             extra_buff   <= 0;
             main_buff    <= 0;
             state        <= EMPTY;
             e_ready_i_d1 <= 0;
         end else begin 
-            /* i_valid_i_p1 <= i_valid_i;
-            i_valid_i_p2 <= i_valid_i_p1;
-            e_ready_i_p1 <= e_ready_i;
-            if (just_ivi || just_just_ivi) begin 
-                extra_buff <= i_data_i;
-                main_buff  <= extra_buff;
-            end else begin
-                extra_buff <= extra_buff;
-                main_buff  <= main_buff;
-            end */ 
             e_ready_i_d1 <= e_ready_i;
             case (state) 
             EMPTY: begin 

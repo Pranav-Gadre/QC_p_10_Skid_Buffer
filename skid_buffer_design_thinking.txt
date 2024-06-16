@@ -105,6 +105,26 @@ Design Description:
 -- what is relationship b/w i_data_i and e_data_o, when i_valid_i is "0"
    but e_ready_i is "1"
 
+TC Observations:
+
+-- I was assuming that the e_valid_o is same as i_valid_i. Not True. 
+-- Under interface requirements section, it is GIVEN that:
+
+-- Valid will remain asserted until ready is seen and may remain 
+   asserted in case of back-to-back requests
+   
+-- Does that mean valid can go low once ready is seen? 
+
+-- How long the valid should wait for back-to-back requests before 
+   becoming de-asserted?
+
+-- In TC-1, it worked because e_ready_i was never asserted and i_valid_i
+   was never de-asserted. 
+-- In TC-2, it worked because e_ready_i was never de-asserted.
+-- In TC-3, my assumption is caught red-handed. 
+
+-- One more question is: Can Requester send more data while asserting 
+   i_valid_i only once? It is happening in TC-2, TC-3.
 
 After completion:
 
