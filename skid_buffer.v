@@ -32,18 +32,14 @@ module skid_buffer (
     
 
     // major
-//    assign e_data_o  = (e_ready_i && i_valid_i) ? i_data_i : main_buff;
     assign e_data_o  = (state == EMPTY || state == HALF) ? i_data_i : extra_buff;
-//    assign e_data_o  = (state == EMPTY) ? i_data_i   : main_buff;
     assign e_valid_o = (i_valid_i || (state != EMPTY));
-//    assign i_ready_o = ((state == EMPTY && i_valid_i) || e_ready_i_d1);
     assign i_ready_o = ((state == EMPTY) || e_ready_i_d1);    
     
     
     always @ (posedge clk or posedge reset) begin 
         if (reset) begin 
             extra_buff   <= 0;
-        //    main_buff    <= 0;
             state        <= EMPTY;
             e_ready_i_d1 <= 0;
         end else begin 
@@ -56,32 +52,24 @@ module skid_buffer (
                     state <= EMPTY;
                 end 
                 extra_buff <= i_data_i;
-            //    main_buff  <= extra_buff;
             end 
             HALF : begin
                 if (i_valid_i && (!e_ready_i)) begin 
                     state <= FULL;
-            //    end else if (e_ready_i && (!i_valid_i)) begin 
-            //        state <= EMPTY;
                 end else if (e_ready_i) begin 
                     state <= EMPTY;
                 end else begin 
                     state <= HALF;
                 end 
                 extra_buff <= i_data_i;
-            //    main_buff  <= extra_buff;
             end 
             FULL : begin
-            //    if (e_ready_i && (!i_valid_i)) begin 
-            //        state <= HALF;
                 if (e_ready_i) begin 
                     state <= HALF;
                     extra_buff <= i_data_i;
-                //    main_buff  <= extra_buff;
                 end else begin 
                     state <= FULL;
                     extra_buff <= extra_buff;
-                //    main_buff  <= main_buff;
                 end 
                 
             end 
