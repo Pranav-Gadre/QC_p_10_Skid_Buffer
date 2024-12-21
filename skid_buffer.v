@@ -78,11 +78,14 @@ module skid_buffer (
             //        state <= HALF;
                 if (e_ready_i) begin 
                     state <= HALF;
+                    extra_buff <= i_data_i;
+                    main_buff  <= extra_buff;
                 end else begin 
                     state <= FULL;
+                    extra_buff <= extra_buff;
+                    main_buff  <= main_buff;
                 end 
-                extra_buff <= extra_buff;
-                main_buff  <= main_buff;
+                
             end 
             endcase
         end 
